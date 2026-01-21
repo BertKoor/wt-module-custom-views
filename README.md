@@ -1,7 +1,9 @@
-# webtrees module for custom views
+# webtrees module for custom views (and translations)
 
 This [webtrees](https://www.webtrees.net) module provides a storage location for customized versions of the `.phtml` files
 outside of the usual `resources/views/` directory, so they remain untouched upon upgrades.
+
+For simple textual changes it also supports custom translations through `.csv` files.
 
 ## Compatibility
 
@@ -29,6 +31,8 @@ The end result looks like this:
 * `modules_v4 <dir>` (already exists on your server)
    * `wt-module-custom-views <dir>`
       * `resources <dir>`
+         * `lang <dir>`
+            * `en-US.csv` 
          * `views <dir>`
             * `login-page.phtml`
       * `CustomViewsModule.php`
@@ -36,14 +40,48 @@ The end result looks like this:
 
 The files `latest-version.txt` and this `README.md` are not required to be uploaded to your server, but won't do any harm.
 
-## Usage
-Put your copy of `.phtml` files in the `resources/views/` directory of this module.
+Anything in the `resources/` directory serves as a basic example and may be deleted.
+You are expected to put your own files there.
 
-The original folder structure of webtrees should be mimicked, so subdirectories 
-such as `edit/` or `modules/faq/` should be created by you.
+## Usage
+
+### Custom views
+Put your copy of `.phtml` files in the `resources/views/` directory of this module.
+All files in all subdirectories with the extension `.phtml` will automatically be registered
+as a custom view.
+
+The original folder structure of webtrees must be mimicked.
+Subdirectories such as `edit/` or `modules/faq/` should be created if applicable.
+
+Because the original files might change with an upgrade, it is advised 
+to make a copy of each one in the `resources/views/` folder of this module, 
+for example copy the original `login-page.phtml` to `login-page.phtml.bak`.
+Then after an upgrade you can compare what you have changed and what changed in the core code.
 
 The provided `login-page.phtml` can be deleted, it serves just as an example.
-It is a plain copy of the webtrees 2.1 login page with `Username` changed to `User id`.
+It is a plain copy of the webtrees 2.1 (for compatibility) login page with `Username` changed to `User id`.
+
+This is actually a bad example. If you merely want to change some text literals 
+and these are found inside a code block like `<?= I18N::translate('some text') ?>`, 
+then it is advised to use:
+
+### Custom translations
+The mechanism to supply custom translations via `.csv` files is copied from webtrees 1.7.
+It is deemed simple enough and fit for most use cases.
+
+The provided `en-US.csv` translation file can be deleted.
+It serves just as an example. It contains the title of the login page.
+
+#### Translation file requirements:
+
+ * The file location must be the `resources/lang/` directory of this module
+ * The file name should be the code of the language plus `.csv`
+ * Valid language codes can be looked up in the `resources/lang/` directory of webtrees.
+ * Each line contains a single translation, within double quotes and delimited by a semicolon.
+ * The first text on a line is the original (US English) text as can be found as parameter 
+   of a `I18N::translate` function call.
+ * The second text on a line is your alternative rendition or translation of the first text.
+ * Currently only simple translations (without context) are supported.
 
 ## Privacy, telemetry, tracking, etc.
 Privacy: yes. Tracking: no.

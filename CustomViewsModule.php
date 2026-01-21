@@ -34,12 +34,13 @@ class CustomViewsModule extends AbstractModule implements ModuleCustomInterface
 
     public function title(): string
     {
-        return 'Custom views';
+        return 'Custom views (and translations)';
     }
 
     public function description(): string
     {
-        return 'Keep your customizations of .phtml files in a different directory, so upgrades do not overwrite them.';
+        return 'Keep your customizations of .phtml files in a different directory, so upgrades do not overwrite them. ' .
+            'It also supports customization of translations via .csv files.';
     }
 
     /**
@@ -109,6 +110,30 @@ class CustomViewsModule extends AbstractModule implements ModuleCustomInterface
 
     private function register(string $viewName): void {
         View::registerCustomView(View::NAMESPACE_SEPARATOR . $viewName, $this->name() . View::NAMESPACE_SEPARATOR . $viewName);
+    }
+
+    /**
+     * Additional/updated translations.
+     *
+     * @param string $language
+     *
+     * @return array<string>
+     */
+    public function customTranslations(string $language): array
+    {
+        $translations = [];
+        $langFile = $this->resourcesFolder() . 'lang/' . $language . '.csv';
+        if (is_readable($langFile)) {
+            $fp = fopen($langFile, 'rb');
+            if ($fp !== false) {
+                while (($data = fgetcsv($fp, 0, ';', '"', '\\')) !== false) {
+                    $translations[$data[0]] = $data[1];
+                }
+                fclose($fp);
+            }
+
+        }
+        return $translations;
     }
 
 }
