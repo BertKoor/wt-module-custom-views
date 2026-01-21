@@ -22,6 +22,16 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\View;
 
+use function fopen;
+use function fclose;
+use function fgetcsv;
+use function is_dir;
+use function is_readable;
+use function scandir;
+use function str_ends_with;
+use function str_replace;
+use function str_starts_with;
+
 class CustomViewsModule extends AbstractModule implements ModuleCustomInterface
 {
     use ModuleCustomTrait;
