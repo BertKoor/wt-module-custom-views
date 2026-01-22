@@ -38,7 +38,7 @@ class CustomViewsModule extends AbstractModule implements ModuleCustomInterface
 
     const GITHUB_USER = 'bertkoor';
     const GITHUB_REPO = 'wt-module-custom-views';
-    const THIS_VERSION = '1.0.0';
+    const THIS_VERSION = '1.0.1';
 
     public function __construct() { }
 
@@ -132,16 +132,22 @@ class CustomViewsModule extends AbstractModule implements ModuleCustomInterface
     public function customTranslations(string $language): array
     {
         $translations = [];
-        $langFile = $this->resourcesFolder() . 'lang/' . $language . '.csv';
-        if (is_readable($langFile)) {
-            $fp = fopen($langFile, 'rb');
+        $langPhpFile = $this->resourcesFolder() . 'lang/' . $language . '.php';
+        if (is_readable($langPhpFile)) {
+            $phpContent = include $langPhpFile;
+            if (is_array($phpContent)) {
+                $translations += $phpContent;
+            }
+        }
+        $langCsvFile = $this->resourcesFolder() . 'lang/' . $language . '.csv';
+        if (is_readable($langCsvFile)) {
+            $fp = fopen($langCsvFile, 'rb');
             if ($fp !== false) {
                 while (($data = fgetcsv($fp, 0, ';', '"', '\\')) !== false) {
                     $translations[$data[0]] = $data[1];
                 }
                 fclose($fp);
             }
-
         }
         return $translations;
     }

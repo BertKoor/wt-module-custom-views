@@ -3,7 +3,7 @@
 This [webtrees](https://www.webtrees.net) module provides a storage location for customized versions of the `.phtml` files
 outside of the usual `resources/views/` directory, so they remain untouched upon upgrades.
 
-For simple textual changes it also supports custom translations through `.csv` files.
+For simple textual changes it also supports custom translations through `.php` or `.csv` files.
 
 ## Compatibility
 
@@ -33,7 +33,8 @@ The end result looks like this:
       * `resources <dir>`
          * `lang <dir>`
             * `en-US.csv` 
-         * `views <dir>`
+            * `en-US.php`
+          * `views <dir>`
             * `login-page.phtml`
       * `CustomViewsModule.php`
       * `module.php`
@@ -66,22 +67,66 @@ and these are found inside a code block like `<?= I18N::translate('some text') ?
 then it is advised to use:
 
 ### Custom translations
-The mechanism to supply custom translations via `.csv` files is copied from webtrees 1.7.
-It is deemed simple enough and fit for most use cases.
+The mechanism to supply custom translations via `.php` or `.csv` files is borrowed from webtrees 1.7.
+It is deemed simple enough and fit for most use cases. Both formats may be used, even for the same language.
 
-The provided `en-US.csv` translation file can be deleted.
-It serves just as an example. It contains the title of the login page.
+The provided `en-US.csv` and `en-US.php` translation file can be deleted.
+These serve just as an example.
+
+* `en-US.csv` contains an alternative title of the login page.
+* `en-US.php` changes the phrase "_Forgot password?_" to "_Request a new password_", which also is present on the login page.
 
 #### Translation file requirements:
+* The file location must be the `resources/lang/` directory of this module.
+* The file name should be the code of the language plus `.csv` or `.php`.
+* Valid language codes can be looked up in the `resources/lang/` directory of webtrees.
+* Currently only simple translations (without context) are supported.
 
- * The file location must be the `resources/lang/` directory of this module
- * The file name should be the code of the language plus `.csv`
- * Valid language codes can be looked up in the `resources/lang/` directory of webtrees.
- * Each line contains a single translation, within double quotes and delimited by a semicolon.
- * The first text on a line is the original (US English) text as can be found as parameter 
-   of a `I18N::translate` function call.
- * The second text on a line is your alternative rendition or translation of the first text.
- * Currently only simple translations (without context) are supported.
+##### For `.php` files:
+* They must return an array of key-value pairs, eg:
+``` php 
+<?php return [
+   'some text' => 'the translation',
+   'another text' => 'another translation',
+];
+```
+* The key represents the original (US English) text as can be found as parameter
+  of a `I18N::translate` function call.
+* The value is your alternative rendition or translation.
+
+##### For `.csv` files:
+* A header line is not expected. If present, it will be processed as if it were a translation.
+* Each line contains a single translation, within double quotes and delimited by a semicolon,
+  eg:
+``` csv
+"some text";"the translation"
+"another text";"another translation"
+```
+* The first string on a line is the original (US English) text as can be found as parameter
+  of a `I18N::translate` function call.
+* The second string on a line is your alternative rendition or translation of the first text.
+
+#### Some considerations for using either `.php` or `.csv` files:
+* There's more freedom in the formatting of a `.php` file, since the original text
+  and translation are not required to be on the same line, and they  
+  [may contain](https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.single)
+  embedded newlines to span multiple lines or contain unescaped double quote characters.
+* Processing of `.php` files is supposedly faster, depending on 
+  [caching configuration](https://webtrees.net/admin/performance/) of your PHP engine. 
+* A `.csv` file is read multiple times per page view.
+  I suspect this might also be cached by the file system, although that may not be the case.
+  Note that I have not done any performance measurements, _yet_.
+
+#### Translation tips & tricks, whatelse...
+* The date format in webtrees is localized via translation key `"%j %F %Y"`.
+  This makes the date format in American English different from British English.
+  By translating this key to a different formatting string, you can swap the day and month,
+  use traditional `dd/mm/yyyy` notation, include the day of the week, pick long or short month names, etcetera.
+  See for details: https://www.php.net/manual/en/datetime.format.php 
+* I wasted some time trying to get a different text for `first cousin`, 
+  since it has a translation context (male versus female form in some languages) but alas to no avail.
+  As it turns out, this text is literally present in `app/Module/LanguageEnglishUnitedStates.php`
+  and does not pass any translation. So not every textual tweak is simple or straight forward.
 
 ## Privacy, telemetry, tracking, etc.
 Privacy: yes. Tracking: no.
