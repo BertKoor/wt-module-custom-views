@@ -34,14 +34,15 @@ The end result looks like this:
          * `lang <dir>`
             * `en-US.csv` 
             * `en-US.php`
-          * `views <dir>`
+         * `views <dir>`
             * `login-page.phtml`
+            * `login-page.phtml.bak`
       * `CustomViewsModule.php`
       * `module.php`
 
 The files `latest-version.txt` and this `README.md` are not required to be uploaded to your server, but won't do any harm.
 
-Anything in the `resources/` directory serves as a basic example and may be deleted.
+All files in the `resources/` directory serve as a basic example and may be deleted.
 You are expected to put your own files there.
 
 ## Usage
@@ -54,15 +55,27 @@ as a custom view.
 The original folder structure of webtrees must be mimicked.
 Subdirectories such as `edit/` or `modules/faq/` should be created if applicable.
 
-Because the original files might change with an upgrade, it is advised 
-to make a copy of each one in the `resources/views/` folder of this module, 
-for example copy the original `login-page.phtml` to `login-page.phtml.bak`.
-Then after an upgrade you can compare what you have changed and what changed in the core code.
+#### Advised way of working
+* If the view you want to change resides in a subdirectory of `resources/views/`, 
+  then create the same subdirectory in the `resources/views/` directory of this module. 
+* Copy the view from webtrees' `resources/views/` to the `resources/views/` directory of this module.
+* Immediately make a copy with `.bak` appended to the file name as a backup.
+* If the view was already changed, then hunt down the original version and copy it to this modules' directory
+  with `.bak` appended to the file name.
 
-The provided `login-page.phtml` can be deleted, it serves just as an example.
+#### In case of upgrades
+* When you receive an upgrade of webtrees, your tweaked views are safe and will no longer be overwritten.
+* Meanwhile, there might have been changes done in the views of webtrees.
+  By comparing the `.phtml.bak` file with the upgraded file, you can assert whether changes have indeed been made.
+  And by comparing the `.phtml.bak` file with your own version, you can assert what changes you have made.
+* After merging in changes from the core code into your own version, replace the `.phtml.bak` with a fresh
+  copy of the original version of that view.
+
+#### Example custom view
+The provided `login-page.phtml` and its backup can be deleted, these serve just as an example.
 It is a plain copy of the webtrees 2.1 (for compatibility) login page with `Username` changed to `User id`.
 
-This is actually a bad example. If you merely want to change some text literals 
+This is actually a __bad example__. If you merely want to change some text literals 
 and these are found inside a code block like `<?= I18N::translate('some text') ?>`, 
 then it is advised to use:
 
