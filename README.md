@@ -1,7 +1,7 @@
 # webtrees module for custom views (and translations)
 
 This [webtrees](https://www.webtrees.net) module provides a storage location for customized versions of the `.phtml` files
-outside of the usual `resources/views/` directory, so they remain untouched upon upgrades.
+outside the usual `resources/views/` directory, so they remain untouched upon upgrades.
 
 For simple textual changes it also supports custom translations through `.php` or `.csv` files.
 
@@ -47,8 +47,7 @@ You are expected to put your own files there.
 
 ## Custom views
 Put your copy of `.phtml` files in the `resources/views/` directory of this module.
-All files in all subdirectories with the extension `.phtml` will automatically be registered
-as a custom view.
+All files in all subdirectories with the extension `.phtml` will automatically be registered as a custom view.
 
 The original folder structure of webtrees must be mimicked.
 Subdirectories such as `edit/` or `modules/faq/` should be created if applicable.
@@ -56,21 +55,23 @@ Subdirectories such as `edit/` or `modules/faq/` should be created if applicable
 ### Advised way of working
 * If the view you want to change resides in a subdirectory of `resources/views/`, 
   then create the same subdirectory in the `resources/views/` directory of this module. 
-* Copy the view from webtrees' `resources/views/` to the `resources/views/` directory of this module.
+* Copy the `.phtml` file from webtrees' `resources/views/` to the `resources/views/` directory of this module.
 * Immediately make a copy with `.bak` appended to the file name as a backup.
-* If the view was already changed, then hunt down the original version and copy it to this modules' directory
-  with `.bak` appended to the file name.
+* If the `.phtml` file was already changed, then hunt down the original version and copy it 
+  to this modules' directory with `.bak` appended to the file name. 
 
-### In case of upgrades
-* When you receive an upgrade of webtrees, your tweaked views are safe and will no longer be overwritten.
+Because:
+
+### In case of an upgrade of webtrees
+* When you receive an upgrade of webtrees, your tweaked views are safe and will not be overwritten.
 * Meanwhile, there might have been changes done in the views of webtrees.
-  By comparing the `.phtml.bak` file with the upgraded file, you can assert whether changes have indeed been made.
-  And by comparing the `.phtml.bak` file with your own version, you can assert what changes you have made.
+* By comparing the `.phtml.bak` file with the upgraded file, you can assert whether changes have indeed been made.
+* And by comparing the `.phtml.bak` file with your own version, you can assert what changes you have made.
 * After merging in changes from the core code into your own version, replace the `.phtml.bak` with a fresh
-  copy of the original version of that view.
+  copy of the original version of that view, so the stage is set ready for the next upgrade.
 
 ### Example custom view
-The provided `login-page.phtml` and its backup can be deleted, these serve just as an example.
+The provided `login-page.phtml` and its backup of the original serve just as an example and can be deleted.
 It is a plain copy of the webtrees 2.1 (for compatibility) login page with `Username` changed to `User id`.
 
 This is actually a __bad example__. If you merely want to change some text literals 
@@ -81,17 +82,16 @@ then it is advised to use:
 The mechanism to supply custom translations via `.php` or `.csv` files is borrowed from webtrees 1.7.
 It is deemed simple enough and fit for most use cases. Both formats may be used, even for the same language.
 
-The provided `en-US.csv` and `en-US.php` translation file can be deleted.
-These serve just as an example.
+The provided `en-US.csv` and `en-US.php` translation files serve just as an example and can be deleted.
 
 * `en-US.csv` contains an alternative title of the login page.
-* `en-US.php` changes the phrase "_Forgot password?_" to "_Request a new password_", which also is present on the login page.
+* `en-US.php` changes the phrase "_Forgot password?_" to "_Request a new password_".
+   That phrase is also present on the login page, so you can verify the alternative text is used.
 
 ### Translation file requirements:
 * The file location must be the `resources/lang/` directory of this module.
-* The file name should be the code of the language plus `.csv` or `.php`.
+* The file name must be the code of the language (case-sensitive!) with file extension `.csv` or `.php`.
 * Valid language codes can be looked up in the `resources/lang/` directory of webtrees.
-* Currently only simple translations (without context) are supported.
 
 #### For `.php` files:
 * They must return an array of key-value pairs, eg:
@@ -101,28 +101,28 @@ These serve just as an example.
    'another text' => 'another translation',
 ];
 ```
-* The key represents the original (US English) text as can be found as parameter
+* The key represents the original (American English) text as can be found as parameter
   of a `I18N::translate` function call.
 * The value is your alternative rendition or translation.
 
 #### For `.csv` files:
 * A header line is not expected. If present, it will be processed as if it were a translation.
-* Each line contains a single translation, within double quotes and delimited by a semicolon,
-  eg:
+* Each line contains a single translation, delimited by a semicolon, eg:
 ``` csv
 "some text";"the translation"
 "another text";"another translation"
 ```
-* The first string on a line is the original (US English) text as can be found as parameter
-  of a `I18N::translate` function call.
-* The second string on a line is your alternative rendition or translation of the first text.
+* The first string on a line is the original (American English) text as can be found as parameter
+  of a `I18N::translate` function call, optionally within double quotes.
+* The second string on a line is your alternative rendition or translation of the first text, 
+  optionally within double quotes.
 
 ### Considerations for using either `.php` or `.csv` files:
 * There's more freedom in the formatting of a `.php` file, since the original text
-  and translation are not required to be on the same line, and they  
-  [may contain](https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.single)
+  and translation are not required to be on the same line,
+  and they [may contain](https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.single)
   embedded newlines to span multiple lines or contain unescaped double quote characters.
-* Processing of `.php` files is supposedly faster, depending on 
+* Processing of `.php` files is supposedly a bit faster, depending on 
   [caching configuration](https://webtrees.net/admin/performance/) of your PHP engine. 
 * A `.csv` file is read multiple times per page view.
   I suspect this might also be cached by the file system, although that may not be the case.
@@ -138,6 +138,18 @@ These serve just as an example.
   since it has a translation context (male versus female form in some languages) but alas to no avail.
   As it turns out, this text is literally present in `app/Module/LanguageEnglishUnitedStates.php`
   and does not pass any translation. So not every textual tweak is simple or straight forward.
+* If you need to tweak translations performed via a `I18N::plural` or `I18N::translateContext` function call,
+  then here's how that can be done:
+```php
+<?php
+use Fisharebest\Localization\Translation;
+return [
+    '%s signed-in user' . Translation::PLURAL_SEPARATOR . '%s signed-in users' =>
+        '%s logged in user' . Translation::PLURAL_SEPARATOR . '%s logged in users',
+    'MALE'   . Translation::CONTEXT_SEPARATOR . 'first cousin' => '1st cousin',
+    'FEMALE' . Translation::CONTEXT_SEPARATOR . 'first cousin' => '1st cousinette',
+];
+```
 
 ## Privacy, telemetry, tracking, etc.
 Privacy: yes. Tracking: no.
