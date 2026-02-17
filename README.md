@@ -150,6 +150,14 @@ return [
     'FEMALE' . Translation::CONTEXT_SEPARATOR . 'first cousin' => '1st cousinette',
 ];
 ```
+* If you want the title of your tree (often title of the whole website) internationalized and different per language:
+  * Copy the view `resources/views/layouts/default.phtml` to `modules_v4/wt-module-custom-views/resources/views/layouts/default.phtml`. 
+  * In the copy of `default.phtml` locate the line: `<h1 class="col wt-site-title"><?= e($tree->title()) ?></h1>` (should be line 83 or thereabout)
+  * Replace it with: `<h1 class="col wt-site-title"><?= I18N::translate($tree->title()) ?></h1>`
+  * Supply per language a different translation of `My family tree` (or whatever your tree title is)
+  * Note: this might not work with third party themes. For instance if you use the JustLight theme, then in file
+    `modules_v4/jc-theme-justlight/resources/views/layouts/body/site-title.phtml` you should change `e($tree->title())`
+    to `\Fisharebest\Webtrees\I18N::translate($tree->title())` directly.
 
 ## Privacy, telemetry, tracking, etc.
 Privacy: yes. Tracking: no.
