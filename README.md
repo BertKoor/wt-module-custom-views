@@ -158,6 +158,20 @@ return [
   * Note: this might not work with third party themes. For instance if you use the JustLight theme, then in file
     `modules_v4/jc-theme-justlight/resources/views/layouts/body/site-title.phtml` you should change `e($tree->title())`
     to `\Fisharebest\Webtrees\I18N::translate($tree->title())` directly.
+* If you use 3-letter ISO codes for countries, then very basic geographical functions do not work correctly,
+  such as menu Charts - Statistics - tab Other - map  `Individual distribution chart`.
+  This map expects the country names in your place hierarchy to match a list of known countries in all languages.
+  This can thus be fixed with a translation, eg: 
+```
+return [
+    'Netherlands'    => 'NLD',
+    'Belgium'        => 'BEL',
+    'Germany'        => 'DEU',
+    'France'         => 'FRA',
+    'United Kingdom' => 'GBR',
+    'United States'  => 'USA',
+];
+```
 
 ## Privacy, telemetry, tracking, etc.
 Privacy: yes. Tracking: no.
